@@ -14,8 +14,11 @@ import DirectionProvider from "@/providers/direction-provider";
 import AuthProvider from "@/providers/auth.provider";
 
 export const metadata: Metadata = {
-  title: "Dashcode admin Template",
-  description: "created by codeshaper",
+  title: "TalentQ Admin",
+  description: "created by leantech",
+  icons: {
+    icon: "/q_logo.png",
+  },
 };
 
 export default async function RootLayout({

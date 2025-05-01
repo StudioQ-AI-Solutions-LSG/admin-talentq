@@ -1,7 +1,9 @@
-import React from "react";
-
-const page = () => {
-  return <h1 className=" text-2xl"> Your Content goes here... </h1>;
-};
-
-export default page;
+import { redirect } from "next/navigation";
+export default function Home({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  // Redirect to the login page
+  redirect(`/${locale}/accounts`);
+}

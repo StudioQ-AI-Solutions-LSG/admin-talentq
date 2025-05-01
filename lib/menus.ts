@@ -34,15 +34,15 @@ export function getMenuList(pathname: string, t: any): Group[] {
 
   return [
     {
-      groupLabel: t("dashboard"),
-      id: "dashboard",
+      groupLabel: t("accounts"),
+      id: "accounts",
       menus: [
         {
-          id: "dashboard",
-          href: "/",
-          label: t("dashboard"),
-          active: pathname.includes("/"),
-          icon: "heroicons-outline:home",
+          id: "accounts",
+          href: "/accounts",
+          label: t("accounts"),
+          active: pathname.includes("/accounts"),
+          icon: "mdi:accounts-outline",
           submenus: [],
         },
       ],
@@ -53,13 +53,13 @@ export function getMenuList(pathname: string, t: any): Group[] {
 export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {
-      groupLabel: t("dashboard"),
-      id: "dashboard",
+      groupLabel: t("accounts"),
+      id: "accounts",
       menus: [
         {
-          id: "dashboard",
-          href: "/",
-          label: t("dashboard"),
+          id: "accounts",
+          href: "/accounts",
+          label: t("accounts"),
           active: pathname.includes("/"),
           icon: "heroicons-outline:home",
           submenus:[],

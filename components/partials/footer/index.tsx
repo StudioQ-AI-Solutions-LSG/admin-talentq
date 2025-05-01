@@ -9,17 +9,17 @@ const DashCodeFooter = async () => {
     <FooterContent>
       <div className=" md:flex  justify-between text-default-600 hidden">
         <div className="text-center md:ltr:text-start md:rtl:text-right text-sm">
-          COPYRIGHT &copy; {new Date().getFullYear()} DashCode, All rights
+          COPYRIGHT &copy; {new Date().getFullYear()} Leantech, All rights
           Reserved
         </div>
         <div className="md:ltr:text-right md:rtl:text-end text-center text-sm">
           Hand-crafted & Made by{" "}
           <a
-            href="https://codeshaper.net"
+            href="https://www.leangroup.com/solutions-and-services/technology"
             target="_blank"
             className="text-primary font-semibold"
           >
-            Codeshaper
+            Leantech
           </a>
         </div>
       </div>

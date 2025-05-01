@@ -125,6 +125,7 @@
   },
   "Menu": {
     "dashboard": "Dashboard",
+    "accounts": "Accounts",
     "analytics": "Analytics",
     "banking": "Banking",
     "crm": "Crm",

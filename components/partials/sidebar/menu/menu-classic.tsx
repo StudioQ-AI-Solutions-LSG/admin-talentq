@@ -78,7 +78,7 @@ export function MenuClassic({ }) {
                     })}>
 
                         <TeamSwitcher />
-                        <SearchBar />
+                        {/*<SearchBar />*/}
                     </div>
 
                 )}
