@@ -1,6 +1,6 @@
 import { DataProps } from "./account-columns";
 
-export const data: DataProps[] = [
+export const data: any[] = [
   {
     id: 1,
     order: 951,

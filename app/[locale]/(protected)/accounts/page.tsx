@@ -26,6 +26,8 @@ import {
 
 import { data } from "./components/data"
 import TablePagination from "./components/account-table-pagination"
+import { useAccounts } from './hooks/useAccounts'
+
 
 const AccountsTable= () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -36,8 +38,18 @@ const AccountsTable= () => {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
+  const {
+    accounts,
+    pagination,
+    isLoading,
+    error
+  } = useAccounts({
+    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba"
+  })
+
+  console.log(pagination)
   const table = useReactTable({
-    data,
+    data: accounts ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

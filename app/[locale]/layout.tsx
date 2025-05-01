@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import MountedProvider from "@/providers/mounted.provider";
+import QueryProvider from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
@@ -35,6 +36,7 @@ export default async function RootLayout({
       <body className={`${inter.className} dashcode-app `}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>
+          <QueryProvider>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -49,6 +51,7 @@ export default async function RootLayout({
               <Toaster />
               <SonnerToaster />
             </ThemeProvider>
+            </QueryProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

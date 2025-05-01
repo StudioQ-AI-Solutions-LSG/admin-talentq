@@ -19,15 +19,12 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils";
 export type DataProps = {
   id:string | number;
-  order: number;
-  customer: {
+  account: {
     name: string;
     image: string;
   };
-  date: string;
-  quantity: number;
-  amount: string;
-  status: "paid" | "due" | "canceled";
+  created_at: string;
+  status: "active" | "inactive";
   action: React.ReactNode;
 }
 export const columns: ColumnDef<DataProps>[] = [
@@ -61,15 +58,10 @@ export const columns: ColumnDef<DataProps>[] = [
     cell: ({ row }) => <span>{row.getValue("id")}</span>,
   },
   {
-    accessorKey: "order",
-    header: "Order",
-    cell: ({ row }) => <span>{row.getValue("order")}</span>,
-  },
-  {
-    accessorKey: "customer",
-    header: "Customer",
+    accessorKey: "account",
+    header: "Account",
     cell: ({ row }) => {
-      const user = row.original.customer;
+      const user = row.original.account;
       return (
         <div className="font-medium text-card-foreground/80">
           <div className="flex gap-3 items-center">
@@ -79,7 +71,11 @@ export const columns: ColumnDef<DataProps>[] = [
               {user?.image ? (
                 <AvatarImage src={user.image} />
               ) : (
-                <AvatarFallback>AB</AvatarFallback>
+                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-base font-medium text-primary dark:text-primary-foreground">
+                  {user.name.slice(0,2).toUpperCase()}
+                </span>
+              </div>
               )}
             </Avatar>
             <span className="text-sm text-default-600 whitespace-nowrap">
@@ -91,13 +87,19 @@ export const columns: ColumnDef<DataProps>[] = [
     }
   },
   {
-    accessorKey: "date",
+    accessorKey: "created_at",
     header: "Date",
     cell: ({ row }) => {
       return (
-        <span>{row.getValue("date")}</span>
+        <span>{row.getValue("created_at")}</span>
       )
     }
+  },
+  /*
+    {
+    accessorKey: "order",
+    header: "Order",
+    cell: ({ row }) => <span>{row.getValue("order")}</span>,
   },
   {
     accessorKey: "quantity",
@@ -116,15 +118,14 @@ export const columns: ColumnDef<DataProps>[] = [
         <span>{row.getValue("amount")}</span>
       )
     }
-  },
+  }*/
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
       const statusColors: Record<string, string> = {
-        paid: "bg-success/20 text-success",
-        due: "bg-warning/20 text-warning",
-        canceled: "bg-destructive/20 text-destructive"
+        active: "bg-success/20 text-success",
+        inactive: "bg-destructive/20 text-destructive"
       };
       const status = row.getValue<string>("status");
       const statusStyles = statusColors[status] || "default";
