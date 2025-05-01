@@ -24,7 +24,7 @@ const DashCodeHeader = async () => {
                 </div>
                 <div className="nav-tools flex items-center  md:gap-4 gap-3">
                     <ThemeSwitcher />
-                    <Notifications />
+                    {/*<Notifications />*/}
                     <ProfileInfo />
                     <SheetMenu />
                 </div>
