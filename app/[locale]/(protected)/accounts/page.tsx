@@ -37,20 +37,28 @@ const AccountsTable= () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [ pagination, setPagination ] = React.useState({
+    pageIndex: 0,
+    pageSize: 10
+  })
 
   const {
     accounts,
-    pagination,
+    pagination : servicePagination,
     isLoading,
     error
   } = useAccounts({
-    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba"
+    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
+    page: pagination.pageIndex + 1
   })
+
 
   console.log(pagination)
   const table = useReactTable({
     data: accounts ?? [],
     columns,
+    manualPagination: true,
+    pageCount: servicePagination?.totalPages ?? 1,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -59,11 +67,13 @@ const AccountsTable= () => {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination
     },
   })
 

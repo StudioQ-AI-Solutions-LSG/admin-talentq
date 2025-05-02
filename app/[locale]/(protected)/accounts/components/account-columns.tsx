@@ -73,7 +73,7 @@ export const columns: ColumnDef<DataProps>[] = [
               ) : (
                 <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center flex-shrink-0">
                 <span className="text-base font-medium text-primary dark:text-primary-foreground">
-                  {user.name.slice(0,2).toUpperCase()}
+                  {user.name?.slice(0,2).toUpperCase()}
                 </span>
               </div>
               )}

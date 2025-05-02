@@ -7,7 +7,27 @@ interface DataTablePaginationProps {
   table: Table<any>;
 }
 
+
 const TablePagination = ({ table }: DataTablePaginationProps) => {
+
+  const currentPage = table.getState().pagination.pageIndex;
+  const totalPages = table.getPageCount();
+
+  const getPageButtons = () => {
+  const pages = new Set<number>();
+
+  pages.add(0); // First page
+  pages.add(totalPages - 1); // Last page
+
+  for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+    if (i > 0 && i < totalPages - 1) {
+      pages.add(i);
+    }
+  }
+
+  return Array.from(pages).sort((a, b) => a - b);
+};
+
   return (
     <div className="flex items-center justify-end py-4 px-10">
       <div className="flex-1 text-sm text-muted-foreground">
@@ -25,18 +45,24 @@ const TablePagination = ({ table }: DataTablePaginationProps) => {
         >
           <ChevronLeft className='w-4 h-4' />
         </Button>
-        {table.getPageOptions().map((page, pageIndex) => (
-          <Button
-            key={`basic-data-table-${pageIndex}`}
-            onClick={() => table.setPageIndex(pageIndex)}
-            size="icon"
-            className="w-8 h-8"
-            variant={table.getState().pagination.pageIndex === pageIndex ? 'default' : 'outline'}
-          >
-            {page + 1}
-          </Button>
-
-        ))}
+        {getPageButtons().map((page, idx, arr) => {
+          const prev = arr[idx - 1];
+          const showEllipsis = prev !== undefined && page - prev > 1;
+                
+          return (
+            <React.Fragment key={page}>
+              {showEllipsis && <span className="px-1">…</span>}
+              <Button
+                onClick={() => table.setPageIndex(page)}
+                size="icon"
+                className="w-8 h-8"
+                variant={table.getState().pagination.pageIndex === page ? 'default' : 'outline'}
+              >
+                {page + 1}
+              </Button>
+            </React.Fragment>
+          );
+        })}
         <Button
           variant="outline"
           size="icon"
