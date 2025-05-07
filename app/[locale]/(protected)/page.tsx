@@ -5,5 +5,5 @@ export default function Home({
   params: { locale: string };
 }) {
   // Redirect to the login page
-  redirect(`/${locale}/accounts`);
+  redirect(`/${locale}/candidates`);
 }

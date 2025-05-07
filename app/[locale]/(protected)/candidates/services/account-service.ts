@@ -32,6 +32,16 @@ export const accountService = {
             );
             throw error;
         }
+    },
+
+    getAccountDetails: async (accountId: string): Promise<any> => {
+        try {
+            const response = await httpV2.get(`/admin-portal/customers/${accountId}`);
+            return response
+        } catch (error) {
+            console.error("Error fetching account details:", error);
+            throw error;
+        }
     }
 }
 

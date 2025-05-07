@@ -32,14 +32,6 @@ const SearchBar = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
 
             >
-                {(config.collapsed && !hovered) ? <CollapsedSearchBar /> :
-                    <InputGroup merged >
-                        <InputGroupText className='bg-transparent dark:border-secondary dark:group-focus-within:border-secondary'>
-                            <Search className=' h-4 w-4 dark:text-white' />
-                        </InputGroupText>
-                        <Input type="text" placeholder="Search Menu..." className='bg-transparent  dark:border-secondary dark:placeholder-white/80 dark:focus:border-secondary dark:text-white' />
-                    </InputGroup>
-                }
             </motion.div>
         </AnimatePresence>
 
