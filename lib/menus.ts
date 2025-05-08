@@ -42,7 +42,7 @@ export function getMenuList(pathname: string, t: any): Group[] {
           href: "/candidates",
           label: t("candidates"),
           active: pathname.includes("/candidates"),
-          icon: "mdi:accounts-outline",
+          icon: "heroicons:user-group",
           submenus: [],
         },
       ],

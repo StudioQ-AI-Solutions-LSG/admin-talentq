@@ -1,27 +1,24 @@
-import { httpV2 } from "@/lib/api/axios";
-import { Account } from "@/types/accounts-types";
 import { useQuery } from "@tanstack/react-query";
+import candidateService from "../services/candidates-service";
 
 
-type AccountListParams = {
+type CandidateListParams = {
     selected_division?: string,
     page?: string
 }
 
 
-export const useAccounts = (params: AccountListParams) => {
+export const useCandidates = (params: CandidateListParams) => {
 
     const {
-        data: accounts,
+        data: candidates,
         isLoading: isFetching,
         error: queryError,
         refetch
     } = useQuery({
-        queryKey: ["accounts"],
+        queryKey: ["candidates"],
         queryFn: async () => {
-
-            const url = `/admin-portal/customers?selected_division=${params.selected_division}`;
-            return await httpV2.get<Account[]>(url)
+            return candidateService.getCandidates(params)
         },
         staleTime: 1000 * 60 * 5
     })
@@ -34,7 +31,12 @@ export const useAccounts = (params: AccountListParams) => {
     };
 
     return {
-        accounts: accounts ?? [],
+        candidates: candidates ?? [],
+        pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 1,
+        },
         isLoading: isFetching,
         error: queryError ? getErrorMessage(queryError) : null,
         refetch

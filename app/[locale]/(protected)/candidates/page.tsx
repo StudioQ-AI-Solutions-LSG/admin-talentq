@@ -26,9 +26,10 @@ import {
 } from "@/components/ui/table";
 
 import TablePagination from "./components/candidates-table-pagination";
+import { useCandidates } from "./hooks/use-candidates";
 
 const AccountsTable = () => {
-  /*
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -42,18 +43,17 @@ const AccountsTable = () => {
   });
 
   const {
-    accounts,
+    candidates,
     pagination: servicePagination,
     isLoading,
     error,
-  } = useAccounts({
-    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
-    page: pagination.pageIndex + 1,
-  });
+  } = useCandidates({
+    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba"
+    });
 
   console.log(pagination);
   const table = useReactTable({
-    data: accounts ?? [],
+    data: candidates ?? [],
     columns,
     manualPagination: true,
     pageCount: servicePagination?.totalPages ?? 1,
@@ -81,16 +81,16 @@ const AccountsTable = () => {
     <div className="w-full">
       <div className="flex items-center py-4 px-5">
         <div className="flex-1 text-2xl font-medium text-default-900">
-          Accounts Management
+          Candidates
         </div>
         <div className="flex-none">
           <Input
             placeholder="Search by name..."
             value={
-              (table.getColumn("account")?.getFilterValue() as string) ?? ""
+              (table.getColumn("name")?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
-              table.getColumn("account")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="max-w-sm "
           />
@@ -153,12 +153,6 @@ const AccountsTable = () => {
       <TablePagination table={table} />
     </div>
   );
-  */
-
-  return(
-    <>
-      Candidates
-    </>
-  )
+  
 };
 export default AccountsTable;

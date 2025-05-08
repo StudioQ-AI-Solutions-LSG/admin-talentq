@@ -18,13 +18,20 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export type DataProps = {
-  id: string | number;
-  account: {
-    name: string;
-    image: string;
+  id: number;
+  name: string;
+  photo: string;
+  join_to_req: string;
+  interview_date: string;
+  decision_date: string;
+  activation_date: string;
+  billing_date: string;
+  durations: {
+    join_to_interview: string;
+    interview_to_decision: string;
+    decision_to_activation: string;
+    activation_to_billing: string;
   };
-  created_at: string;
-  status: "active" | "inactive";
   action: React.ReactNode;
 };
 
@@ -94,27 +101,27 @@ export const columns: ColumnDef<DataProps>[] = [
     cell: ({ row }) => <span>{row.getValue("id") ?? "--"}</span>,
   },
   {
-    accessorFn: (row) => row.account?.name,
-    id: "account",
-    header: "Account",
+    accessorFn: (row) => row.name,
+    id: "name",
+    header: "Name",
     cell: ({ row }) => {
-      const user = row.original.account;
+      const candidate = row.original;
       return (
         <div className="font-medium text-card-foreground/80">
           <div className="flex gap-3 items-center">
             <Avatar className="rounded-full w-8 h-8 bg-transparent hover:bg-transparent shadow-none border-none">
-              {user?.image ? (
-                <AvatarImage src={user.image} />
+              {candidate?.photo ? (
+                <AvatarImage src={candidate.photo} />
               ) : (
                 <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-base font-medium text-primary dark:text-primary-foreground">
-                    {user.name?.slice(0, 2).toUpperCase()}
+                    {candidate.name?.slice(0, 2).toUpperCase()}
                   </span>
                 </div>
               )}
             </Avatar>
             <span className="text-sm text-default-600 whitespace-nowrap">
-              {user?.name ?? "--"}
+              {candidate?.name ?? "--"}
             </span>
           </div>
         </div>
@@ -122,10 +129,38 @@ export const columns: ColumnDef<DataProps>[] = [
     },
   },
   {
-    accessorKey: "created_at",
-    header: "Date",
+    accessorKey: "join_to_req",
+    header: "Join To Requisition",
     cell: ({ row }) => {
-      return <span>{row.getValue("created_at")}</span>;
+      return <span>{row.getValue("join_to_req")}</span>;
+    },
+  },
+  {
+    accessorKey: "interview_date",
+    header: "Interview",
+    cell: ({ row }) => {
+      return <span>{row.getValue("interview_date")}</span>;
+    },
+  },
+  {
+    accessorKey: "decision_date",
+    header: "Decisition",
+    cell: ({ row }) => {
+      return <span>{row.getValue("decision_date")}</span>;
+    },
+  },
+  {
+    accessorKey: "activation_date",
+    header: "Activation Date",
+    cell: ({ row }) => {
+      return <span>{row.getValue("activation_date")}</span>;
+    },
+  },
+  {
+    accessorKey: "billing_date",
+    header: "Billing",
+    cell: ({ row }) => {
+      return <span>{row.getValue("billing_date")}</span>;
     },
   },
   /*
