@@ -1,12 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import candidateService from "../services/candidates-service";
-
-
-type CandidateListParams = {
-    selected_division?: string,
-    page?: string
-}
-
+import { CandidateListParams } from "../types/candidates-types";
 
 export const useCandidates = (params: CandidateListParams) => {
 
@@ -31,11 +25,11 @@ export const useCandidates = (params: CandidateListParams) => {
     };
 
     return {
-        candidates: candidates ?? [],
+        candidates: candidates?.items ?? [],
         pagination: {
-            currentPage: 1,
-            totalPages: 1,
-            totalItems: 1,
+            currentPage: candidates?.currentPage,
+            totalPages: candidates?.totalPages,
+            totalItems: candidates?.totalPages,
         },
         isLoading: isFetching,
         error: queryError ? getErrorMessage(queryError) : null,

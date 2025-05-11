@@ -1,10 +1,5 @@
 import { httpV2 } from "@/lib/api/axios";
-import { Candidate } from "../types/candidates-types";
-
-type CandidateListParams = {
-    selected_division?: string,
-    page?: string
-}
+import { Candidate, CandidateListParams } from "../types/candidates-types";
 
 
 export const candidateService = {
@@ -12,7 +7,16 @@ export const candidateService = {
         params: CandidateListParams,
     ): Promise<any> => {
         try {
-            const url = `/admin-portal/candidates?selected_division=${params.selected_division}`;
+
+            const queryParams = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== null && value !== undefined) {
+                    queryParams.append(key, String(value));
+                }
+            });
+
+            const queryString = queryParams.toString();
+            const url = `/admin-portal/candidates${queryString ? `?${queryString}` : ""}`;
             return await httpV2.get<Candidate[]>(url)
         } catch (error) {
             console.error(

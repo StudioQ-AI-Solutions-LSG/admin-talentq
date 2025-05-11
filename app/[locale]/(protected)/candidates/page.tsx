@@ -29,7 +29,6 @@ import TablePagination from "./components/candidates-table-pagination";
 import { useCandidates } from "./hooks/use-candidates";
 
 const AccountsTable = () => {
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -38,7 +37,7 @@ const AccountsTable = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
 
@@ -48,8 +47,10 @@ const AccountsTable = () => {
     isLoading,
     error,
   } = useCandidates({
-    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba"
-    });
+    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
+    page : pagination.pageIndex,
+    limit: pagination.pageSize
+  });
 
   console.log(pagination);
   const table = useReactTable({
@@ -75,8 +76,6 @@ const AccountsTable = () => {
     },
   });
 
-  const MotionTr = motion.create("tr");
-
   return (
     <div className="w-full">
       <div className="flex items-center py-4 px-5">
@@ -86,9 +85,7 @@ const AccountsTable = () => {
         <div className="flex-none">
           <Input
             placeholder="Search by name..."
-            value={
-              (table.getColumn("name")?.getFilterValue() as string) ?? ""
-            }
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
@@ -103,7 +100,14 @@ const AccountsTable = () => {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className={
+                      ["timeline", "status"].includes(header.column.id)
+                        ? "text-center"
+                        : ""
+                    }
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -153,6 +157,5 @@ const AccountsTable = () => {
       <TablePagination table={table} />
     </div>
   );
-  
 };
 export default AccountsTable;

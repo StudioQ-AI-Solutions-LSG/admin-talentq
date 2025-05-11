@@ -18,3 +18,10 @@ export interface CandidateResponse {
     data: Candidate[];
     error?: string;
 }
+
+
+export interface CandidateListParams {
+    selected_division: string,
+    page: number,
+    limit: number
+}

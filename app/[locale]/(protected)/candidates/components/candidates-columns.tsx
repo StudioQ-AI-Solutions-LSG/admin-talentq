@@ -1,8 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+
 import { Eye, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns"; // optional for formatting dates
+import { FaDotCircle } from "react-icons/fa"; // optional for timeline dots
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +20,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+type TimelineKey = keyof TimelineData;
+
+type TimelineData = {
+  join_to_req?: string;
+  interview_date?: string;
+  decision_date?: string;
+  activation_date?: string;
+  billing_date?: string;
+};
+
 export type DataProps = {
   id: number;
   name: string;
@@ -26,6 +39,7 @@ export type DataProps = {
   decision_date: string;
   activation_date: string;
   billing_date: string;
+  timeline: TimelineData;
   durations: {
     join_to_interview: string;
     interview_to_decision: string;
@@ -71,7 +85,7 @@ const ActionsCell = ({ row }: { row: any }) => {
 };
 
 export const columns: ColumnDef<DataProps>[] = [
-  {
+  /*{
     id: "select",
     header: ({ table }) => (
       <Checkbox
@@ -94,7 +108,7 @@ export const columns: ColumnDef<DataProps>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
+  },*/
   {
     accessorKey: "id",
     header: "id",
@@ -129,17 +143,87 @@ export const columns: ColumnDef<DataProps>[] = [
     },
   },
   {
-    accessorKey: "join_to_req",
-    header: "Join To Requisition",
+    accessorKey: "requisition_custom_name",
+    header: "requisition",
+    cell: ({ row }) => <span>{row.getValue("requisition_custom_name") ?? "--"}</span>,
+  },   
+  {
+    accessorKey: "timeline",
+    header: "Timeline",
     cell: ({ row }) => {
-      return <span>{row.getValue("join_to_req")}</span>;
+      const timeline = row.getValue("timeline") as TimelineData;
+  
+      const stages: { label: string; key: TimelineKey }[] = [
+        { label: "Requisition", key: "join_to_req" },
+        { label: "Interview", key: "interview_date" },
+        { label: "Decision", key: "decision_date" },
+        { label: "Activation", key: "activation_date" },
+        { label: "Billing", key: "billing_date" },
+      ];
+  
+      const completedStages = stages.map((stage) => !!timeline?.[stage.key]);
+      const lastCompletedIndex = completedStages.lastIndexOf(true);
+  
+      return (
+        <div className="flex items-center justify-between py-4 px-1 overflow-x-auto relative">
+          {stages.map(({ label, key }, index) => {
+            const date = timeline?.[key];
+            const isCompleted = !!date;
+            const isLastCompleted = index === lastCompletedIndex;
+            const pointColor = isCompleted ? "green" : "gray";
+            const lineColor =
+              index < lastCompletedIndex ? "bg-green-500" : "bg-gray-300";
+  
+            return (
+              <div
+                key={key}
+                className="relative flex flex-col items-center text-center min-w-[70px] flex-1"
+              >
+                {index < stages.length - 1 && (
+                  <div
+                    className={`absolute top-2 left-1/2 h-0.5 ${lineColor}`}
+                    style={{
+                      width: "100%",
+                      transform: "translateX(0%)",
+                      zIndex: 0,
+                    }}
+                  />
+                )}
+  
+                {/* Dot */}
+                <div className="relative flex h-4 w-4 items-center justify-center mb-2 z-10 bg-white rounded-full">
+                  {isLastCompleted && (
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                  )}
+                  <FaDotCircle className={`text-${pointColor}-500 relative z-10`} />
+                </div>
+  
+                {/* Tags */}
+                <div className="text-xs text-gray-700 whitespace-nowrap">
+                  <div className="font-semibold">{label}</div>
+                  <div>{date ? format(new Date(date), "MMM dd") : "—"}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
     },
   },
-  {
+    
+  /*   {
     accessorKey: "interview_date",
     header: "Interview",
     cell: ({ row }) => {
-      return <span>{row.getValue("interview_date")}</span>;
+      const date = row.getValue("interview_date");
+      return (
+        <div className="flex items-center space-x-2">
+          <FaDotCircle className={`text-${"red"}-500`} />
+          <span className="text-sm text-gray-700">
+            {date ? format(new Date(row.getValue("interview_date")), "MMM dd, yyyy") : "—"}
+          </span>
+        </div>
+      );
     },
   },
   {
@@ -162,7 +246,7 @@ export const columns: ColumnDef<DataProps>[] = [
     cell: ({ row }) => {
       return <span>{row.getValue("billing_date")}</span>;
     },
-  },
+  }, */
   /*
     {
     accessorKey: "order",
@@ -192,9 +276,14 @@ export const columns: ColumnDef<DataProps>[] = [
     header: "Status",
     cell: ({ row }) => {
       const statusColors: Record<string, string> = {
-        active: "bg-success/20 text-success",
-        inactive: "bg-destructive/20 text-destructive",
+        Presented: "bg-blue-100 text-blue-600",
+        Interview: "bg-blue-100 text-blue-600",
+        Accepted: "bg-blue-100 text-blue-600",
+        Rejected: "bg-blue-100 text-blue-600",
+        Activated: "bg-success/20 text-success",
+        Billed: "bg-success/20 text-success",
       };
+
       const status = row.getValue<string>("status");
       const statusStyles = statusColors[status] || "default";
       return (
