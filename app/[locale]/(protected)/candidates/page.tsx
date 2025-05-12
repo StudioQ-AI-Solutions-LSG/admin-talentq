@@ -27,6 +27,7 @@ import {
 
 import TablePagination from "./components/candidates-table-pagination";
 import { useCandidates } from "./hooks/use-candidates";
+import { Loader2 } from "lucide-react";
 
 const AccountsTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -37,7 +38,7 @@ const AccountsTable = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
-    pageIndex: 1,
+    pageIndex: 0,
     pageSize: 10,
   });
 
@@ -48,8 +49,8 @@ const AccountsTable = () => {
     error,
   } = useCandidates({
     selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
-    page : pagination.pageIndex,
-    limit: pagination.pageSize
+    page: pagination.pageIndex + 1,
+    limit: pagination.pageSize,
   });
 
   console.log(pagination);
@@ -148,7 +149,10 @@ const AccountsTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                <span className=" inline-flex gap-1  items-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </span>
               </TableCell>
             </TableRow>
           )}

@@ -10,7 +10,7 @@ export const useCandidates = (params: CandidateListParams) => {
         error: queryError,
         refetch
     } = useQuery({
-        queryKey: ["candidates"],
+        queryKey: ["candidates", params],
         queryFn: async () => {
             return candidateService.getCandidates(params)
         },

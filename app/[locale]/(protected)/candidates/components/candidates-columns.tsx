@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Eye, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns"; // optional for formatting dates
+import { formatInTimeZone } from "date-fns-tz"; // optional for formatting dates
 import { FaDotCircle } from "react-icons/fa"; // optional for timeline dots
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ type TimelineData = {
 export type DataProps = {
   id: number;
   name: string;
+  email: string;
   photo: string;
   join_to_req: string;
   interview_date: string;
@@ -110,9 +111,9 @@ export const columns: ColumnDef<DataProps>[] = [
     enableHiding: false,
   },*/
   {
-    accessorKey: "id",
-    header: "id",
-    cell: ({ row }) => <span>{row.getValue("id") ?? "--"}</span>,
+    accessorKey: "created_at",
+    header: "Date",
+    cell: ({ row }) => <span>{row.getValue("created_at") ?? "--"}</span>,
   },
   {
     accessorFn: (row) => row.name,
@@ -134,9 +135,14 @@ export const columns: ColumnDef<DataProps>[] = [
                 </div>
               )}
             </Avatar>
-            <span className="text-sm text-default-600 whitespace-nowrap">
-              {candidate?.name ?? "--"}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-sm text-default-600">
+                {candidate?.name ?? "--"}
+              </span>
+              <span className="text-xs text-default-400 lowercase">
+                {candidate?.email ?? "--"}
+              </span>
+            </div>
           </div>
         </div>
       );
@@ -145,14 +151,16 @@ export const columns: ColumnDef<DataProps>[] = [
   {
     accessorKey: "requisition_custom_name",
     header: "requisition",
-    cell: ({ row }) => <span>{row.getValue("requisition_custom_name") ?? "--"}</span>,
-  },   
+    cell: ({ row }) => (
+      <span>{row.getValue("requisition_custom_name") ?? "--"}</span>
+    ),
+  },
   {
     accessorKey: "timeline",
     header: "Timeline",
     cell: ({ row }) => {
       const timeline = row.getValue("timeline") as TimelineData;
-  
+
       const stages: { label: string; key: TimelineKey }[] = [
         { label: "Requisition", key: "join_to_req" },
         { label: "Interview", key: "interview_date" },
@@ -160,20 +168,21 @@ export const columns: ColumnDef<DataProps>[] = [
         { label: "Activation", key: "activation_date" },
         { label: "Billing", key: "billing_date" },
       ];
-  
+
       const completedStages = stages.map((stage) => !!timeline?.[stage.key]);
       const lastCompletedIndex = completedStages.lastIndexOf(true);
-  
+
       return (
         <div className="flex items-center justify-between py-4 px-1 overflow-x-auto relative">
           {stages.map(({ label, key }, index) => {
             const date = timeline?.[key];
             const isCompleted = !!date;
             const isLastCompleted = index === lastCompletedIndex;
-            const pointColor = isCompleted ? "green" : "gray";
+            const pointColor =
+              index < lastCompletedIndex || isCompleted ? "green" : "gray";
             const lineColor =
               index < lastCompletedIndex ? "bg-green-500" : "bg-gray-300";
-  
+
             return (
               <div
                 key={key}
@@ -189,19 +198,25 @@ export const columns: ColumnDef<DataProps>[] = [
                     }}
                   />
                 )}
-  
+
                 {/* Dot */}
                 <div className="relative flex h-4 w-4 items-center justify-center mb-2 z-10 bg-white rounded-full">
                   {isLastCompleted && (
                     <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
                   )}
-                  <FaDotCircle className={`text-${pointColor}-500 relative z-10`} />
+                  <FaDotCircle
+                    className={`text-${pointColor}-500 relative z-10`}
+                  />
                 </div>
-  
+
                 {/* Tags */}
                 <div className="text-xs text-gray-700 whitespace-nowrap">
                   <div className="font-semibold">{label}</div>
-                  <div>{date ? format(new Date(date), "MMM dd") : "—"}</div>
+                  <div>
+                    {date
+                      ? formatInTimeZone(new Date(date), "UTC", "MMM dd")
+                      : "—"}
+                  </div>
                 </div>
               </div>
             );
@@ -210,7 +225,7 @@ export const columns: ColumnDef<DataProps>[] = [
       );
     },
   },
-    
+
   /*   {
     accessorKey: "interview_date",
     header: "Interview",
@@ -278,8 +293,8 @@ export const columns: ColumnDef<DataProps>[] = [
       const statusColors: Record<string, string> = {
         Presented: "bg-blue-100 text-blue-600",
         Interview: "bg-blue-100 text-blue-600",
-        Accepted: "bg-blue-100 text-blue-600",
-        Rejected: "bg-blue-100 text-blue-600",
+        Accepted: "bg-green-100 text-green-600",
+        Rejected: "bg-red-100 text-red-600",
         Activated: "bg-success/20 text-success",
         Billed: "bg-success/20 text-success",
       };
