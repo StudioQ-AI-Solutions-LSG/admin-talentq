@@ -178,10 +178,8 @@ export const columns: ColumnDef<DataProps>[] = [
             const date = timeline?.[key];
             const isCompleted = !!date;
             const isLastCompleted = index === lastCompletedIndex;
-            const pointColor =
-              index < lastCompletedIndex || isCompleted ? "green" : "gray";
-            const lineColor =
-              index < lastCompletedIndex ? "bg-green-500" : "bg-gray-300";
+            const pointColor = index < lastCompletedIndex || isCompleted ? "green" : "gray";
+            const lineColor = index < lastCompletedIndex ? "bg-green-500" : "bg-gray-300";
 
             return (
               <div
@@ -205,7 +203,7 @@ export const columns: ColumnDef<DataProps>[] = [
                     <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
                   )}
                   <FaDotCircle
-                    className={`text-${pointColor}-500 relative z-10`}
+                   className={`text-${pointColor}-500 relative z-10`}
                   />
                 </div>
 

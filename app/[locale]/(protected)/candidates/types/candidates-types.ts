@@ -22,6 +22,7 @@ export interface CandidateResponse {
 
 export interface CandidateListParams {
     selected_division: string,
+    search_key: string,
     page: number,
     limit: number
 }

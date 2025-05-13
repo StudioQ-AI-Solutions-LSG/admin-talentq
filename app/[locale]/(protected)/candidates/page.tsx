@@ -2,19 +2,19 @@
 
 import * as React from "react";
 import {
-  ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { FiSearch } from "react-icons/fi";
 import { columns } from "./components/candidates-columns";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import debounce from "just-debounce-it";
 
 import {
   Table,
@@ -31,9 +31,6 @@ import { Loader2 } from "lucide-react";
 
 const AccountsTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -41,6 +38,21 @@ const AccountsTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const [search, setSearch] = React.useState("");
+  const [searchKey, setSearchKey] = React.useState("");
+
+  const debounceSearch = React.useCallback(
+    debounce((newSearch: string) => {
+      setSearchKey(newSearch);
+    }, 300),
+    []
+  );
+
+  const handleSearchBar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    debounceSearch(e.target.value);
+  };
 
   const {
     candidates,
@@ -51,26 +63,24 @@ const AccountsTable = () => {
     selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
+    search_key: searchKey,
   });
 
-  console.log(pagination);
   const table = useReactTable({
     data: candidates ?? [],
     columns,
     manualPagination: true,
+    manualFiltering: true,
     pageCount: servicePagination?.totalPages ?? 1,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     state: {
       sorting,
-      columnFilters,
       columnVisibility,
       rowSelection,
       pagination,
@@ -79,45 +89,56 @@ const AccountsTable = () => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 px-5">
-        <div className="flex-1 text-2xl font-medium text-default-900">
+      <div className="px-5 py-4">
+        <div className="text-2xl font-medium text-default-900 mb-4">
           Candidates
         </div>
-        <div className="flex-none">
-          <Input
-            placeholder="Search by name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm "
-          />
+
+        <div className="flex items-center gap-3 max-w-xl">
+          <div className="relative w-full">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <FiSearch className="h-5 w-5" />
+            </span>
+            <Input
+              placeholder="Search by Name, Email, Requisition..."
+              value={search}
+              onChange={handleSearchBar}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+
+          <button
+            onClick={() => {
+              setSearch("");
+              setSearchKey("");
+            }}
+            className="text-sm px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition-colors duration-200"
+          >
+            Clear
+          </button>
         </div>
       </div>
-
       <Table>
         <TableHeader className="bg-default-200">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      ["timeline", "status"].includes(header.column.id)
-                        ? "text-center"
-                        : ""
-                    }
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  className={
+                    ["timeline", "status"].includes(header.column.id)
+                      ? "text-center"
+                      : ""
+                  }
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}{" "}
             </TableRow>
           ))}
         </TableHeader>
@@ -149,10 +170,14 @@ const AccountsTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                <span className=" inline-flex gap-1  items-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loading...
-                </span>
+                {isLoading ? (
+                  <span className="inline-flex gap-1 items-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading...
+                  </span>
+                ) : (
+                  <p>No results were found...</p>
+                )}
               </TableCell>
             </TableRow>
           )}
@@ -162,4 +187,5 @@ const AccountsTable = () => {
     </div>
   );
 };
+
 export default AccountsTable;
