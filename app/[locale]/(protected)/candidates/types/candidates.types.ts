@@ -22,6 +22,8 @@ export interface CandidateResponse {
 
 export interface CandidateListParams {
     selected_division: string,
+    selected_customer: string,
+    selected_customer_name?: string,
     search_key: string,
     page: number,
     limit: number

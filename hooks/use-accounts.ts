@@ -1,5 +1,5 @@
 import { httpV2 } from "@/lib/api/axios";
-import { Account } from "@/types/accounts-types";
+import { Account } from "@/types/accounts.types";
 import { useQuery } from "@tanstack/react-query";
 
 

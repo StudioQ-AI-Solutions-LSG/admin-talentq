@@ -28,25 +28,29 @@ import {
 import TablePagination from "./components/candidates-table-pagination";
 import { useCandidates } from "./hooks/use-candidates";
 import { Loader2 } from "lucide-react";
+import { useCandidatesStore } from "@/store/candidate.store";
 
 const AccountsTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
 
-  const [search, setSearch] = React.useState("");
-  const [searchKey, setSearchKey] = React.useState("");
+  const {
+    selected_customer,
+    selected_division,
+    search_key,
+    page,
+    limit,
+    setParams,
+  } = useCandidatesStore();
+
+  const [search, setSearch] = React.useState(search_key ?? "");
 
   const debounceSearch = React.useCallback(
     debounce((newSearch: string) => {
-      setSearchKey(newSearch);
+      setParams({ search_key: newSearch });
     }, 300),
-    []
+    [setParams]
   );
 
   const handleSearchBar = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,12 +63,12 @@ const AccountsTable = () => {
     pagination: servicePagination,
     isLoading,
     error,
-  } = useCandidates({
-    selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
-    page: pagination.pageIndex + 1,
-    limit: pagination.pageSize,
-    search_key: searchKey,
-  });
+  } = useCandidates();
+
+  const paginationState = {
+    pageIndex: page - 1,
+    pageSize: limit,
+  };
 
   const table = useReactTable({
     data: candidates ?? [],
@@ -78,12 +82,19 @@ const AccountsTable = () => {
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
+    onPaginationChange: (updater) => {
+      const next =
+        typeof updater === "function" ? updater(paginationState) : updater;
+      setParams({
+        page: next.pageIndex + 1,
+        limit: next.pageSize,
+      });
+    },
     state: {
       sorting,
       columnVisibility,
       rowSelection,
-      pagination,
+      pagination: paginationState,
     },
   });
 
@@ -110,7 +121,7 @@ const AccountsTable = () => {
           <button
             onClick={() => {
               setSearch("");
-              setSearchKey("");
+              setParams({ search_key: "" });
             }}
             className="text-sm px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition-colors duration-200"
           >
@@ -138,7 +149,7 @@ const AccountsTable = () => {
                         header.getContext()
                       )}
                 </TableHead>
-              ))}{" "}
+              ))}
             </TableRow>
           ))}
         </TableHeader>

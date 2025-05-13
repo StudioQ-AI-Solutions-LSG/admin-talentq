@@ -43,6 +43,7 @@ import { useConfig } from "@/hooks/use-config";
 import { motion } from "framer-motion";
 import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
 import { useAccounts } from "@/hooks/use-accounts";
+import { useCandidatesStore } from "@/store/candidate.store";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -57,14 +58,13 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { data: session } = useSession();
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  const [selectedAccount, setSelectedAccount] =
-    React.useState<string>("Leantech");
 
   const { accounts, isLoading, error, refetch } = useAccounts({
     selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
   });
 
-  console.log(accounts);
+  const { setParams: setCandidatesStore, selected_customer_name } =
+    useCandidatesStore();
 
   if (config.showSwitcher === false || config.sidebar === "compact") {
     return null;
@@ -98,7 +98,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     height={24}
                     width={24}
                     src="/images/avatar/av-1.jpg"
-                    alt={selectedAccount}
+                    alt={selected_customer_name}
                     className="grayscale"
                   />
 
@@ -139,7 +139,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                       John Doe
                     </div>
                     <div className=" text-xs font-normal text-default-500 dark:text-default-700 truncate ">
-                      {selectedAccount}
+                      {selected_customer_name}
                     </div>
                   </div>
                   <div className="">
@@ -181,8 +181,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   <CommandItem
                     key="all-accounts"
                     onSelect={() => {
-                      setSelectedAccount("");
                       setOpen(false);
+                      setCandidatesStore({
+                        selected_customer: "",
+                        selected_customer_name: "All Accounts",
+                      });
                     }}
                     className="text-sm font-normal"
                   >
@@ -190,7 +193,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        selectedAccount === null ? "opacity-100" : "opacity-0"
+                        selected_customer_name === null
+                          ? "opacity-100"
+                          : "opacity-0"
                       )}
                     />
                   </CommandItem>
@@ -198,8 +203,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     <CommandItem
                       key={account.id}
                       onSelect={() => {
-                        setSelectedAccount(account.name);
                         setOpen(false);
+                        setCandidatesStore({
+                          selected_customer: account.id,
+                          selected_customer_name: account.name,
+                        });
                       }}
                       className="text-sm font-normal"
                     >
@@ -207,7 +215,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                       <Check
                         className={cn(
                           "ml-auto h-4 w-4",
-                          selectedAccount === account.name
+                          selected_customer_name === account.name
                             ? "opacity-100"
                             : "opacity-0"
                         )}

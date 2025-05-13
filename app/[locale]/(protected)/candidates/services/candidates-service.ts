@@ -1,5 +1,5 @@
 import { httpV2 } from "@/lib/api/axios";
-import { Candidate, CandidateListParams } from "../types/candidates-types";
+import { Candidate, CandidateListParams } from "../types/candidates.types";
 
 
 export const candidateService = {

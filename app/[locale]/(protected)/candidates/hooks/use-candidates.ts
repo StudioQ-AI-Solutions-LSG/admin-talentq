@@ -1,8 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import candidateService from "../services/candidates-service";
-import { CandidateListParams } from "../types/candidates-types";
+import { CandidateListParams } from "../types/candidates.types";
+import { useCandidatesStore } from "@/store/candidate.store";
 
-export const useCandidates = (params: CandidateListParams) => {
+export const useCandidates = () => {
+    const {
+        selected_division,
+        selected_customer,
+        search_key,
+        page,
+        limit,
+      } = useCandidatesStore();
+
+      const queryParams = {
+        selected_division,
+        selected_customer,
+        search_key,
+        page,
+        limit,
+      };
 
     const {
         data: candidates,
@@ -10,9 +26,9 @@ export const useCandidates = (params: CandidateListParams) => {
         error: queryError,
         refetch
     } = useQuery({
-        queryKey: ["candidates", params],
+        queryKey: ["candidates", queryParams],
         queryFn: async () => {
-            return candidateService.getCandidates(params)
+            return candidateService.getCandidates(queryParams)
         },
         staleTime: 1000 * 60 * 5
     })
