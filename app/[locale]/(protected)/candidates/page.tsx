@@ -29,15 +29,16 @@ import TablePagination from "./components/candidates-table-pagination";
 import { useCandidates } from "./hooks/use-candidates";
 import { Loader2 } from "lucide-react";
 import { useCandidatesStore } from "@/store/candidate.store";
+import { CandidatesRequisitionFilter } from "./components/candidates-requisition-filter";
+import { useRequisitionsFilter } from "./hooks/use-requisitions-filter";
 
 const AccountsTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [ selectedRequisitionId, setSelectedRequisitionId ] = React.useState<string | null>(null);
 
   const {
-    selected_customer,
-    selected_division,
     search_key,
     page,
     limit,
@@ -58,12 +59,21 @@ const AccountsTable = () => {
     debounceSearch(e.target.value);
   };
 
+  const handleRequisitionChange = (value: string | null) => {
+    setSelectedRequisitionId(value);
+    setParams({ requisition_position_id: value }); // o el nombre del filtro que uses en tu backend
+  };
+
   const {
     candidates,
     pagination: servicePagination,
     isLoading,
     error,
   } = useCandidates();
+
+  const {
+    requisitions,
+  } = useRequisitionsFilter();
 
   const paginationState = {
     pageIndex: page - 1,
@@ -114,14 +124,15 @@ const AccountsTable = () => {
               placeholder="Search by Name, Email, Requisition..."
               value={search}
               onChange={handleSearchBar}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
+              className="w-[350px] pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
           </div>
-
+          <CandidatesRequisitionFilter requisitions={requisitions} selected_requisition_id={selectedRequisitionId} onChange={handleRequisitionChange} />
           <button
             onClick={() => {
               setSearch("");
-              setParams({ search_key: "" });
+              setParams({ search_key: "", requisition_position_id: null });
+              setSelectedRequisitionId(null)
             }}
             className="text-sm px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition-colors duration-200"
           >

@@ -1,24 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-import candidateService from "../services/candidates-service";
-import { CandidateListParams } from "../types/candidates.types";
 import { useCandidatesStore } from "@/store/candidate.store";
+import candidateService from "../services/candidates-service";
 
 export const useCandidates = () => {
     const {
         selected_division,
         selected_customer,
+        requisition_position_id,
         search_key,
         page,
         limit,
-      } = useCandidatesStore();
+    } = useCandidatesStore();
 
-      const queryParams = {
+    const queryParams = {
         selected_division,
         selected_customer,
+        requisition_position_id,
         search_key,
         page,
         limit,
-      };
+    };
 
     const {
         data: candidates,

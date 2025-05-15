@@ -15,6 +15,7 @@ export const useCandidatesStore = create<CandidateStore>()(
       selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
       selected_customer: "",
       selected_customer_name: "",
+      requisition_position_id: "",
       search_key: "",
       page: 1,
       limit: 10,
@@ -29,6 +30,7 @@ export const useCandidatesStore = create<CandidateStore>()(
         set({
           selected_division: "",
           selected_customer: "",
+          requisition_position_id: "",
           search_key: "",
           page: 1,
           limit: 10,

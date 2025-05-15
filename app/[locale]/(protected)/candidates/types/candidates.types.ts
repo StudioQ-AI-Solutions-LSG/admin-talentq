@@ -24,6 +24,7 @@ export interface CandidateListParams {
     selected_division: string,
     selected_customer: string,
     selected_customer_name?: string,
+    requisition_position_id: string | null,
     search_key: string,
     page: number,
     limit: number
