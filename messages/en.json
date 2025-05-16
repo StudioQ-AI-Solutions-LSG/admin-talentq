@@ -126,6 +126,7 @@
   "Menu": {
     "dashboard": "Dashboard",
     "candidates": "Candidates",
+    "requisitions": "Requisitions",
     "analytics": "Analytics",
     "banking": "Banking",
     "crm": "Crm",

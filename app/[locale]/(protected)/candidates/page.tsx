@@ -33,6 +33,7 @@ import { CandidatesRequisitionFilter } from "./components/candidates-requisition
 import { useRequisitionsFilter } from "./hooks/use-requisitions-filter";
 import { CandidatesStatusFilter } from "./components/candidates-status-filter";
 import { statusCandidates } from "@/lib/constants/candidates.constants";
+import { CandidatesCounters } from "./components/candidates-counters";
 
 const AccountsTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -117,7 +118,8 @@ const AccountsTable = () => {
         <div className="text-2xl font-medium text-default-900 mb-4">
           Candidates
         </div>
-        <div className="flex items-center gap-3 w-full">
+        <CandidatesCounters />
+        <div className="flex items-center gap-3 w-full mt-7">
           <div className="relative">
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               <FiSearch className="h-5 w-5" />

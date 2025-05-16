@@ -34,9 +34,17 @@ export function getMenuList(pathname: string, t: any): Group[] {
 
   return [
     {
-      groupLabel: t("candidates"),
+      groupLabel: t(""),
       id: "candidates",
       menus: [
+        {
+          id: "dashboard",
+          href: "/dashboard",
+          label: t("dashboard"),
+          active: pathname.includes("/dashboard"),
+          icon: "heroicons:banknotes",
+          submenus: [],
+        },
         {
           id: "candidates",
           href: "/candidates",
@@ -45,15 +53,22 @@ export function getMenuList(pathname: string, t: any): Group[] {
           icon: "heroicons:user-group",
           submenus: [],
         },
+        {
+          id: "requisitions",
+          href: "/requisitions",
+          label: t("requisitions"),
+          active: pathname.includes("/requisitions"),
+          icon: "heroicons:clipboard-document-check",
+          submenus: [],
+        },
       ],
     },
-    
   ];
 }
 export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {
-      groupLabel: t("candidates"),
+      groupLabel: t("Menu"),
       id: "candidates",
       menus: [
         {
@@ -62,11 +77,25 @@ export function getHorizontalMenuList(pathname: string, t: any): Group[] {
           label: t("candidates"),
           active: pathname.includes("/"),
           icon: "heroicons-outline:home",
-          submenus:[],
+          submenus: [],
+        },
+        {
+          id: "candidates",
+          href: "/candidates",
+          label: t("candidates"),
+          active: pathname.includes("/candidates"),
+          icon: "heroicons:user-group",
+          submenus: [],
+        },
+        {
+          id: "requisitions",
+          href: "/requisitions",
+          label: t("requisitions"),
+          active: pathname.includes("/requisitions"),
+          icon: "heroicons:clipboard-document-check",
+          submenus: [],
         },
       ],
     },
-
-    
   ];
 }
