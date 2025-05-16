@@ -7,7 +7,6 @@ import { RequisitionFilter } from "../types/requisitions.types";
 
 export const useRequisitionsFilter = () => {
 
-    console.log("entro al hook de reqs")
     const {
         selected_division,
         selected_customer,
@@ -17,8 +16,6 @@ export const useRequisitionsFilter = () => {
         selected_division,
         selected_customer,
     };
-
-    console.log(params)
 
     const {
         data: requisitions,
@@ -36,14 +33,12 @@ export const useRequisitionsFilter = () => {
             });
 
             const queryString = queryParams.toString();
-            console.log("llego aquiiiii")
             const url = `/admin-portal/filters/requisitions${queryString ? `?${queryString}` : ""}`;
             return await httpV2.get<RequisitionFilter[]>(url)
         },
         staleTime: 1000 * 60 * 5
     })
 
-    console.log(requisitions)
     return {
         requisitions: requisitions ?? [],
         isLoading: isFetching,
