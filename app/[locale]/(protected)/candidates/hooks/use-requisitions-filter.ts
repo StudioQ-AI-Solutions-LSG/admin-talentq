@@ -2,7 +2,7 @@ import { httpV2 } from "@/lib/api/axios";
 import { useQuery } from "@tanstack/react-query"
 import { getErrorMessage } from "@/lib/tools/errors.tools";
 import { useCandidatesStore } from "@/store/candidate.store";
-import { RequisitionFilter } from "../types/requisitions.types";
+import { RequisitionFilter } from "../types/requisitions-filter.types";
 
 
 export const useRequisitionsFilter = () => {

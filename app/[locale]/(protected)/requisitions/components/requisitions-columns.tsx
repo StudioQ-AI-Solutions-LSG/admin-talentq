@@ -44,9 +44,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-
-type TimelineKey = keyof TimelineData;
-
 interface CandidateStatus {
   Required: number;
   Pending: number;
@@ -55,24 +52,18 @@ interface CandidateStatus {
   Rejected: number;
 }
 
-interface TimelineData {
-  start_date: string;
-  filled_date: string | null;
-  closed_date: string | null;
-}
-
 export type DataProps = {
   id: string;
   custom_name: string;
   created_at: string;
   budget: number;
-  customer_name: string;
+  customer: string;
   status: "New" | "In Progress" | "Filled" | "Closed" | "Closed By Customer";
   days_of_last_action_by_customer: number;
   candidates: CandidateStatus;
-  timeline: TimelineData;
   elapsed_days: number;
   action?: React.ReactNode;
+  calculated_status: string;
 };
 
 export default function HealthCell({ value }: { value: number }) {
@@ -209,7 +200,7 @@ export const columns: ColumnDef<DataProps>[] = [
       return (
         <div className="flex items-center justify-start gap-2">
           <span>
-            {createdAt ? format(new Date(createdAt), "yyyy-MM-dd") : "--"}
+            {createdAt ? createdAt : "--"}
           </span>
 
           {typeof days === "number" && (
@@ -227,9 +218,9 @@ export const columns: ColumnDef<DataProps>[] = [
     cell: ({ row }) => <span>{row.getValue("custom_name") ?? "--"}</span>,
   },
   {
-    accessorKey: "customer_name",
+    accessorKey: "customer",
     header: "Customer",
-    cell: ({ row }) => <span>{row.getValue("customer_name") ?? "--"}</span>,
+    cell: ({ row }) => <span>{row.getValue("customer") ?? "--"}</span>,
   },
 
   {
@@ -263,36 +254,32 @@ export const columns: ColumnDef<DataProps>[] = [
       const total = Object.values(c || {}).reduce((acc, val) => acc + val, 0);
 
       const candidateColors: Record<string, { bg: string; text: string }> = {
-        Pending: {
-          bg: "bg-gray-300",
-          text: "text-gray-700",
-        },
-        Interview: {
-          bg: "bg-gray-200",
-          text: "text-gray-600",
-        },
-        Accepted: {
-          bg: "bg-green-100",
-          text: "text-green-600",
-        },
-        Rejected: {
-          bg: "bg-gray-100",
-          text: "text-gray-500",
-        },
-        Required: {
+        required: {
           bg: "bg-blue-100",
           text: "text-blue-600",
         },
-        Closed: {
-          bg: "bg-gray-500",
-          text: "text-white",
+        in_progress: {
+          bg: "bg-gray-300",
+          text: "text-gray-700",
+        },
+        interview: {
+          bg: "bg-gray-200",
+          text: "text-gray-600",
+        },
+        accepted: {
+          bg: "bg-green-100",
+          text: "text-green-600",
+        },
+        rejected: {
+          bg: "bg-gray-100",
+          text: "text-gray-500",
         },
       };
 
       const sortedEntries = c
         ? Object.entries(c).sort(([keyA], [keyB]) => {
-            if (keyA === "Accepted") return 1;
-            if (keyB === "Accepted") return -1;
+            if (keyA === "accepted") return 1;
+            if (keyB === "accepted") return -1;
             return 0;
           })
         : [];
@@ -357,17 +344,18 @@ export const columns: ColumnDef<DataProps>[] = [
     },
   },*/
   {
-    accessorKey: "status",
+    accessorKey: "calculated_status",
     header: "Status",
     cell: ({ row }) => {
       const statusColors: Record<string, string> = {
-        "In Progress": "bg-blue-100 text-blue-600",
-        Closed: "bg-gray-200 text-gray-800",
+        "in progress": "bg-blue-100 text-blue-600",
+        closed: "bg-gray-200 text-gray-800",
         Filled: "bg-success/20 text-success",
-        New: "bg-purple-100 text-purple-600",
+        new: "bg-purple-100 text-purple-600",
       };
 
-      const status = row.getValue<string>("status");
+      let status = row.getValue<string>("calculated_status");
+      if(status === "in_progress") status = "in progress"
       const statusStyles = statusColors[status] || "default";
 
       return (

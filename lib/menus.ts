@@ -32,6 +32,7 @@ export type Group = {
 
 export function getMenuList(pathname: string, t: any): Group[] {
 
+  console.log("Current pathname:", pathname);
   return [
     {
       groupLabel: t(""),
@@ -41,30 +42,31 @@ export function getMenuList(pathname: string, t: any): Group[] {
           id: "dashboard",
           href: "/dashboard",
           label: t("dashboard"),
-          active: pathname.includes("/dashboard"),
+          active: pathname.startsWith("/dashboard"),
           icon: "heroicons:banknotes",
-          submenus: [],
-        },
-        {
-          id: "candidates",
-          href: "/candidates",
-          label: t("candidates"),
-          active: pathname.includes("/candidates"),
-          icon: "heroicons:user-group",
           submenus: [],
         },
         {
           id: "requisitions",
           href: "/requisitions",
           label: t("requisitions"),
-          active: pathname.includes("/requisitions"),
+          active: pathname.startsWith("/requisitions"),
           icon: "heroicons:clipboard-document-check",
           submenus: [],
         },
+        {
+          id: "candidates",
+          href: "/candidates",
+          label: t("candidates"),
+          active: pathname.startsWith("/candidates"),
+          icon: "heroicons:user-group",
+          submenus: [],
+        }
       ],
     },
   ];
 }
+
 export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {
@@ -72,10 +74,10 @@ export function getHorizontalMenuList(pathname: string, t: any): Group[] {
       id: "candidates",
       menus: [
         {
-          id: "candidates",
-          href: "/candidates",
-          label: t("candidates"),
-          active: pathname.includes("/"),
+          id: "dashboard",
+          href: "/dashboard",
+          label: t("dashboard"),
+          active: pathname.includes("/dashboard"),
           icon: "heroicons-outline:home",
           submenus: [],
         },

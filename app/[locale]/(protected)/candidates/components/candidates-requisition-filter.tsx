@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RequisitionFilter } from "../types/requisitions.types";
+import { RequisitionFilter } from "../types/requisitions-filter.types";
 
 type CandidatesRequisitionFilterProps = {
   requisitions: RequisitionFilter[];

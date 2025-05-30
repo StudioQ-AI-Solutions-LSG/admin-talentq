@@ -44,6 +44,7 @@ import { motion } from "framer-motion";
 import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
 import { useAccounts } from "@/hooks/use-accounts";
 import { useCandidatesStore } from "@/store/candidate.store";
+import { useRequisitionsStore } from "@/store/requisition.store";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -65,6 +66,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 
   const { setParams: setCandidatesStore, selected_customer_name } =
     useCandidatesStore();
+  const { setParams: setRequisitionsStore } = useRequisitionsStore();
 
   if (config.showSwitcher === false || config.sidebar === "compact") {
     return null;
@@ -186,6 +188,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                         selected_customer: "",
                         selected_customer_name: "All Accounts",
                       });
+                      setRequisitionsStore({
+                        selected_customer: "",
+                      });
                     }}
                     className="text-sm font-normal"
                   >
@@ -207,6 +212,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                         setCandidatesStore({
                           selected_customer: account.id,
                           selected_customer_name: account.name,
+                        });
+                        setRequisitionsStore({
+                          selected_customer: account.id,
                         });
                       }}
                       className="text-sm font-normal"

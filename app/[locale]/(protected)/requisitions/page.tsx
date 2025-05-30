@@ -28,7 +28,8 @@ import {
 
 import TablePagination from "./components/requisitions-table-pagination";
 import { Loader2 } from "lucide-react";
-import { useCandidatesStore } from "@/store/candidate.store";
+import { useRequisitions } from "./hooks/use-requisitions";
+import { useRequisitionsStore } from "@/store/requisition.store";
 import { RequisitionsCounters } from "./components/requisitions-counters";
 import { RequisitionsStatusFilter } from "./components/requisitions-status-filter";
 import { statusRequisitions } from "@/lib/constants/requisitions.constants";
@@ -44,7 +45,7 @@ const AccountsTable = () => {
     string | null
   >(null);
   const [selectedStatus, setSelectedStatus] = React.useState<string[]>([]);
-  const { search_key, page, limit, setParams } = useCandidatesStore();
+  const { search_key, page, limit, setParams } = useRequisitionsStore();
   
 
   const [search, setSearch] = React.useState(search_key ?? "");
@@ -61,24 +62,17 @@ const AccountsTable = () => {
     debounceSearch(e.target.value);
   };
 
-  const handleRequisitionChange = (value: string | null) => {
-    setSelectedRequisitionId(value);
-    setParams({ requisition_position_id: value }); // o el nombre del filtro que uses en tu backend
-  };
-
   const handleStatusChange = (value: string[]) => {
     setSelectedStatus(value);
     setParams({ status: value });
   };
 
-  //const {
-  //  candidates,
-  //  pagination: servicePagination,
-  //  isLoading,
-  //  error,
-  //} = useCandidates();
-
-  //const { requisitions } = useRequisitionsFilter();
+  const {
+    requisitions,
+    pagination: servicePagination,
+    isLoading,
+    error,
+  } = useRequisitions();
 
   const paginationState = {
     pageIndex: page - 1,
@@ -86,11 +80,11 @@ const AccountsTable = () => {
   };
 
   const table = useReactTable({
-    data: data ?? [],
+    data: requisitions ?? [],
     columns,
     manualPagination: true,
     manualFiltering: true,
-    pageCount: 1,
+    pageCount: servicePagination?.totalPages ?? 1,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -132,27 +126,16 @@ const AccountsTable = () => {
               className="w-[350px] h-[40px] text-xs text-gray-900 placeholder:text-gray-400 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          {/* <CandidatesRequisitionFilter
-            requisitions={requisitions}
-            selected_requisition_id={selectedRequisitionId}
-            onChange={handleRequisitionChange}
-          />
-          <CandidatesStatusFilter
-            statuses={statusCandidates}
+          <RequisitionsStatusFilter
+            statuses={statusRequisitions}
             selected_status_ids={selectedStatus}
             onChange={handleStatusChange}
-          />*/}
-                    <RequisitionsStatusFilter
-                      statuses={statusRequisitions}
-                      selected_status_ids={selectedStatus}
-                      onChange={handleStatusChange}
-                    />
+          />
           <button
             onClick={() => {
               setSearch("");
               setParams({
                 search_key: "",
-                requisition_position_id: null,
                 status: [],
               });
               setSelectedRequisitionId(null);
@@ -217,7 +200,7 @@ const AccountsTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                {false ? (
+                {isLoading ? (
                   <span className="inline-flex gap-1 items-center">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Loading...

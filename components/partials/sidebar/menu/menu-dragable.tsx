@@ -50,15 +50,19 @@ import { getLangDir } from 'rtl-detect';
 export function MenuDragAble() {
     const t = useTranslations("Menu")
     const pathname = usePathname();
-    const menuList = getMenuList(pathname, t);
     const [config, setConfig] = useConfig()
     const collapsed = config.collapsed
-
+    
     const params = useParams<{ locale: string; }>();
     const direction = getLangDir(params?.locale ?? '');
     // for dnd 
     // reorder rows after drag & drop
-    const [data, setData] = React.useState(menuList);
+    const [data, setData] = React.useState(() => getMenuList(pathname, t));
+    
+    // Recalcula los menús cuando el pathname cambie
+    React.useEffect(() => {
+      setData(getMenuList(pathname, t));
+    }, [pathname, t]);
 
     const dataIds = React.useMemo<UniqueIdentifier[]>(
         () => data.flatMap(group => group.menus.map(menu => menu.id)), [data]

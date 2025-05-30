@@ -1,17 +1,14 @@
 import { httpV2 } from "@/lib/api/axios";
+import { Requisition, RequisitionListParams } from "../types/requisitions.types";
 
-type AccountListParams = {
-    selected_division?: string,
-    page?: string
-}
 
-export const accountService = {
-    getAccounts: async (
-        params: AccountListParams,
+export const requisitionService = {
+    getRequisitions: async (
+        params: RequisitionListParams,
     ): Promise<any> => {
         try {
-            const queryParams = new URLSearchParams();
 
+            const queryParams = new URLSearchParams();
             Object.entries(params).forEach(([key, value]) => {
                 if (value !== null && value !== undefined) {
                     queryParams.append(key, String(value));
@@ -19,10 +16,8 @@ export const accountService = {
             });
 
             const queryString = queryParams.toString();
-            const url = `/admin-portal/customers${queryString ? `?${queryString}` : ""}`;
-
-            const response = await httpV2.get(url)
-            return response
+            const url = `/admin-portal/requisitions${queryString ? `?${queryString}` : ""}`;
+            return await httpV2.get<Requisition[]>(url)
         } catch (error) {
             console.error(
                 "Error fetching users:",
@@ -32,7 +27,7 @@ export const accountService = {
             );
             throw error;
         }
-    }
+    },
 }
 
-export default accountService
+export default requisitionService
