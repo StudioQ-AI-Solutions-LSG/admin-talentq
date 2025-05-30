@@ -23,16 +23,21 @@ export interface Requisition {
 
 
 export interface RequisitionResponse {
-    data: Requisition[];
-    error?: string;
+  data: Requisition[];
+  error?: string;
 }
 
 
 export interface RequisitionListParams {
-    selected_division: string,
-    selected_customer: string,
-    status: string[],
-    search_key: string,
-    page: number,
-    limit: number
+  selected_division: string,
+  selected_customer: string,
+  status: string[],
+  search_key: string,
+  page: number,
+  limit: number
+}
+
+export interface RequisitionCountersParams {
+  selected_division: string,
+  selected_customer: string,
 }

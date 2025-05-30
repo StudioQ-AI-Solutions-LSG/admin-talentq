@@ -30,3 +30,9 @@ export interface CandidateListParams {
     page: number,
     limit: number
 }
+
+export interface CandidateCountersParams {
+    selected_division: string,
+    selected_customer: string,
+    requisition_position_id: string | null,
+}

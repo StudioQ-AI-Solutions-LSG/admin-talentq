@@ -1,5 +1,5 @@
 import { httpV2 } from "@/lib/api/axios";
-import { Requisition, RequisitionListParams } from "../types/requisitions.types";
+import { Requisition, RequisitionCountersParams, RequisitionListParams } from "../types/requisitions.types";
 
 
 export const requisitionService = {
@@ -28,6 +28,32 @@ export const requisitionService = {
             throw error;
         }
     },
+    getRequisitionsCounters: async (
+        params: RequisitionCountersParams,
+    ): Promise<any> => {
+        try {
+
+            const queryParams = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== null && value !== undefined) {
+                    queryParams.append(key, String(value));
+                }
+            });
+
+            const queryString = queryParams.toString();
+            const url = `/admin-portal/requisitions/counters${queryString ? `?${queryString}` : ""}`;
+            return await httpV2.get<Requisition[]>(url)
+        } catch (error) {
+            console.error(
+                "Error fetching users:",
+                params.selected_division ? `for division: ${params.selected_division}` : "error",
+                params,
+                error
+            );
+            throw error;
+        }
+    },
+
 }
 
 export default requisitionService
