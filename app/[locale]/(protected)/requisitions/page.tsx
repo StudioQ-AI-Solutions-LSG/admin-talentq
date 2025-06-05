@@ -1,6 +1,5 @@
 "use client";
 
-import data from "./data";
 import * as React from "react";
 import {
   SortingState,
