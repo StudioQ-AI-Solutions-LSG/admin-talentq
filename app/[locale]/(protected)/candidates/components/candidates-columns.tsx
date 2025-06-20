@@ -294,7 +294,7 @@ export const columns: ColumnDef<DataProps>[] = [
         Accepted: "bg-green-100 text-green-600",
         Rejected: "bg-red-100 text-red-600",
         Activated: "bg-success/20 text-success",
-        Billed: "bg-success/20 text-success",
+        Billed: "bg-purple-100 text-purple-600",
       };
 
       const status = row.getValue<string>("status");
