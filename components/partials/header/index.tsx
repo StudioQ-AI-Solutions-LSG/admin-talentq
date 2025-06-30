@@ -10,7 +10,7 @@ import HorizontalMenu from "./horizontal-menu"
 import HeaderLogo from "./header-logo"
 
 
-const DashCodeHeader = async () => {
+const DashCodeHeader = () => {
     return (
         <>
             <HeaderContent>

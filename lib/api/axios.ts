@@ -1,9 +1,9 @@
+import { useAuthStore } from "@/store/auth.store";
 import axios, {
     AxiosError,
     InternalAxiosRequestConfig,
     AxiosRequestConfig,
   } from "axios";
-  //import { useAuthStore } from "@/store/auth.store";
   
   // Types
   export interface ApiResponse<T = any> {
@@ -27,7 +27,7 @@ import axios, {
   // Error handlers map
   const errorHandlers: ErrorHandlers = {
     401: () => {
-      //useAuthStore.getState().logout();
+      useAuthStore.getState().logout();
       window.location.href = "en/auth/login";
       return Promise.reject(new Error("Session expired"));
     },
@@ -52,10 +52,9 @@ import axios, {
   
     // Request interceptor
     instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      //const token = useAuthStore.getState().token;
-      //if (token) config.headers.Authorization = `Bearer ${token}`;
-  
-      config.headers.Authorization = `Bearer eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiemlwIjoiREVGIn0.M06y7MZTKwMGzQG0YDUwCQN4FMFWGdJvQTRuDowO53oMsqVn-WOAqfJWKN2y3wybctcFT9goRgh0O1H7pNX61fbBAbemGcTj.9PortlBA6vnNgFMztPautw.MOPPdt-9_ghIxGMiu3qVNwDsApqqcnCO9Jxpax9zKufhDYn9p3rgUkGDnggMMWEmH7J0OonvqUSMG4DZFuceSpmaaTB8OH0aqiITjedMOHJFXA6NT97wy4C0QkVpUzRg4tZ-i_ZQm14jE0HBYrYpsw.NWqFsONXpqoHBB4Fy5dFO_LINjcLeEHEMtYCnsofq3Y`;
+    const token = useAuthStore.getState().token;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+
 
       // Add X-Data-Source header when not in production
       const environment = process.env.NEXT_PUBLIC_ENVIRONMENT || "develop";

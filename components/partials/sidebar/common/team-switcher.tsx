@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useSession } from "next-auth/react";
+import { useAuthStore } from "@/store/auth.store";
+
 import { ChevronsUpDown, Check, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -56,9 +57,14 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [config] = useConfig();
   const [hoverConfig] = useMenuHoverConfig();
   const { hovered } = hoverConfig;
-  const { data: session } = useSession();
+  const user = useAuthStore((state) => state.user);
+  console.log(user)
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
+
+    // Usar el store global para la cuenta seleccionada
+  const selectedAccount = useAuthStore((state) => state.selectedAccount);
+  const setSelectedAccount = useAuthStore((state) => state.setSelectedAccount);
 
   const { accounts, isLoading, error, refetch } = useAccounts({
     selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
@@ -105,7 +111,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   />
 
                   <AvatarFallback>
-                    {session?.user?.name?.charAt(0)}
+                    {}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -133,12 +139,12 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     />
 
                     <AvatarFallback>
-                      {session?.user?.name?.charAt(0)}
+                      {}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-start w-[100px]">
                     <div className=" text-sm  font-semibold text-default-900">
-                      John Doe
+                      {user?.name ?? 'User'}
                     </div>
                     <div className=" text-xs font-normal text-default-500 dark:text-default-700 truncate ">
                       {selected_customer_name}
