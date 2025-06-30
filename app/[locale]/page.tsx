@@ -5,5 +5,5 @@ export default function Home({
 }: {
   params: { locale: string };
 }) {
-   //redirect(`/${locale}/auth/login`);
+   redirect(`/${locale}/auth/login`);
 }
