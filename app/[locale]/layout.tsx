@@ -12,7 +12,6 @@ import { getLangDir } from "rtl-detect";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import DirectionProvider from "@/providers/direction-provider";
-import AuthProvider from "@/providers/auth.provider";
 
 export const metadata: Metadata = {
   title: "TalentQ Admin",
@@ -35,7 +34,6 @@ export default async function RootLayout({
     <html lang={locale} dir={direction}>
       <body className={`${inter.className} dashcode-app `}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <AuthProvider>
           <QueryProvider>
             <ThemeProvider
               attribute="class"
@@ -52,7 +50,6 @@ export default async function RootLayout({
               <SonnerToaster />
             </ThemeProvider>
             </QueryProvider>
-          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
