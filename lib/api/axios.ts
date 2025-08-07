@@ -82,10 +82,10 @@ import axios, {
   
   // Create API instances
   const api = createApiInstance(
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
   );
   const apiV2 = createApiInstance(
-    process.env.NEXT_PUBLIC_API_URL_V2 || "http://localhost:3000/api/v2"
+    process.env.NEXT_PUBLIC_API_URL_V2 || "http://localhost:3001/api/v2"
   );
   
   // Factory function to create HTTP methods
