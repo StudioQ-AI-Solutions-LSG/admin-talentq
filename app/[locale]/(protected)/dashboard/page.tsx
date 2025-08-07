@@ -117,6 +117,7 @@ const EcommercePage = () => {
                 </Avatar>
               </div>
 
+
               <div className="flex-1">
                 <h4 className="text-xl font-medium mb-2">
                   <span className="block font-light text-default-800">
