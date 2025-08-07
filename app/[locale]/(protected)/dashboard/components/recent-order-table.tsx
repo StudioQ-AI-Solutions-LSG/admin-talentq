@@ -40,7 +40,7 @@ export type OrdersDataProps = {
   invoice: string;
   price: string;
   status: "paid" | "due" | "pending" | "cancled" | "shipped";
-  elapsed_days: any;
+  elapsed_days?: any;
 };
 
 export const columns: ColumnDef<OrdersDataProps>[] = [
