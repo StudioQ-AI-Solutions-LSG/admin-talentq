@@ -16,7 +16,7 @@ const Login = ({ params: { locale } }: { params: { locale: string } }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectPath = "/candidates";
+      const redirectPath = "/dashboard";
       router.push(`/${locale}${redirectPath}`);
     }
   }, [isAuthenticated, locale, router]);
