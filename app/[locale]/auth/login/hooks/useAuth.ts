@@ -35,8 +35,7 @@ export const useAuth = () => {
       }
     },
     onSuccess: () => {
-      // Redirect to the correct path (/candidates) on success, using dynamic locale
-      router.push(`/${locale}/candidates`);
+      router.push(`/${locale}/dashboard`);
     },
   });
 

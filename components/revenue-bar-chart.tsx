@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useConfig } from "@/hooks/use-config";
 import { useTranslations } from "next-intl";
@@ -10,26 +10,87 @@ interface RevenueBarChartProps {
   height?: number;
   chartType?: "bar" | "area";
   series?: any[];
-  chartColors?: string[]
+  chartColors?: string[];
 }
-const defaultSeries = [{
-  name: "Net Profit",
-  data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-},
-{
-  name: "Revenue",
-  data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-},
-{
-  name: "Free Cash Flow",
-  data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-}]
+
+const defaultSeries = [
+  {
+    name: "Net Profit",
+    data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+  },
+  {
+    name: "Revenue",
+    data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+  },
+  {
+    name: "Free Cash Flow",
+    data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+  },
+];
+
+const data = {
+  items: [
+    {
+      month: "Feb",
+      candidates_required: 452,
+      candidates_accepted: 42,
+      candidates_billed: 30,
+    },
+    {
+      month: "Mar",
+      candidates_required: 427,
+      candidates_accepted: 61,
+      candidates_billed: 37,
+    },
+    {
+      month: "Apr",
+      candidates_required: 92,
+      candidates_accepted: 21,
+      candidates_billed: 14,
+    },
+    {
+      month: "May",
+      candidates_required: 146,
+      candidates_accepted: 36,
+      candidates_billed: 10,
+    },
+    {
+      month: "Jun",
+      candidates_required: 69,
+      candidates_accepted: 12,
+      candidates_billed: 0,
+    },
+    {
+      month: "Jul",
+      candidates_required: 29,
+      candidates_accepted: 4,
+      candidates_billed: 0,
+    },
+  ],
+};
+
+const categories = data.items.map((item) => item.month);
+
+const series = [
+  {
+    name: "Candidates Required",
+    data: data.items.map((item) => item.candidates_required),
+  },
+  {
+    name: "Candidates Accepted",
+    data: data.items.map((item) => item.candidates_accepted),
+  },
+  {
+    name: "Candidates Billed",
+    data: data.items.map((item) => item.candidates_billed),
+  },
+];
+
 const RevenueBarChart = ({
   height = 400,
   chartType = "bar",
   series = defaultSeries,
-  chartColors = ["#4669FA", "#0CE7FA", "#FA916B"]
-
+  chartColors = ["#4669FA", "#0CE7FA", "#FA916B"],
 }: RevenueBarChartProps) => {
   const [config] = useConfig();
   const { isRtl } = config;
@@ -100,17 +161,9 @@ const RevenueBarChart = ({
       },
     },
     xaxis: {
-      categories: [
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-      ],
+      categories: series[0].data.map(
+        (_: any, idx: any) => data.items[idx]?.month || ""
+      ),
       labels: {
         style: {
           colors: mode === "dark" ? "#CBD5E1" : "#475569",
@@ -129,9 +182,17 @@ const RevenueBarChart = ({
       opacity: 1,
     },
     tooltip: {
+      theme: mode === "dark" ? "dark" : "light", // adjusts background and text automatically
       y: {
-        formatter: function (val: number) {
-          return "$ " + val + " thousands";
+        formatter: function (val: number, opts: any) {
+          const seriesName =
+            opts.seriesIndex === 0
+              ? "Candidates Required"
+              : opts.seriesIndex === 1
+              ? "Candidates Accepted"
+              : "Candidates Billed";
+
+          return `${seriesName}: ${val}`;
         },
       },
     },
