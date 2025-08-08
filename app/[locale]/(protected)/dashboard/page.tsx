@@ -5,81 +5,29 @@ import OrdersBlock from "@/components/blocks/orders-block";
 import EarningBlock from "@/components/blocks/earning-block";
 import Customer from "./components/customer";
 import RecentOrderTable from "./components/recent-order-table";
-import VisitorsReportChart from "./components/visitors-report";
-import VisitorsChart from "./components/visitors-chart";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/auth.store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
+import { usePathname } from "@/components/navigation";
+import { cn } from "@/lib/utils";
 
 import { useDashboardCounters } from "./hooks/use-dashboard-counters";
 import { useDashboardCandidatesPerMounth } from "./hooks/use-dashboard-candidates-per-mounth";
 import { useDashboardTopCustomers } from "./hooks/use-dashboard-top-customers";
 import RevenueBarChart from "@/components/revenue-bar-chart";
+import { useDashboardStats } from "./hooks/use-dashboard-stats";
+import DateRangePicker from "@/components/date-range-picker";
+import DashboardDateRangePicker from "./components/dashboard-date-range-picker";
+import { useDashboardStore } from "@/store/dashboard.store";
 
-/* const data = {
-  items: [
-    {
-      month: "Feb",
-      candidates_required: 452,
-      candidates_accepted: 42,
-      candidates_billed: 30,
-    },
-    {
-      month: "Mar",
-      candidates_required: 427,
-      candidates_accepted: 61,
-      candidates_billed: 37,
-    },
-    {
-      month: "Apr",
-      candidates_required: 92,
-      candidates_accepted: 21,
-      candidates_billed: 14,
-    },
-    {
-      month: "May",
-      candidates_required: 146,
-      candidates_accepted: 36,
-      candidates_billed: 10,
-    },
-    {
-      month: "Jun",
-      candidates_required: 69,
-      candidates_accepted: 12,
-      candidates_billed: 0,
-    },
-    {
-      month: "Jul",
-      candidates_required: 29,
-      candidates_accepted: 4,
-      candidates_billed: 0,
-    },
-  ],
-}; */
-
-/* const categories = data.items.map((item) => item.month); */
-
-/* const series = [
-  {
-    name: "Candidates Required",
-    data: data.items.map((item) => item.candidates_required),
-  },
-  {
-    name: "Candidates Accepted",
-    data: data.items.map((item) => item.candidates_accepted),
-  },
-  {
-    name: "Candidates Billed",
-    data: data.items.map((item) => item.candidates_billed),
-  },
-]; */
-
-const EcommercePage = () => {
+const DashboardPage = () => {
   const { counters } = useDashboardCounters();
-  const { candidates } = useDashboardCandidatesPerMounth();
-  const { customers } = useDashboardTopCustomers();
+  const { candidates, isLoading: loadingCandidates } = useDashboardCandidatesPerMounth();
+  const { customers, isLoading: loadingCustomers } = useDashboardTopCustomers();
+  const { stats } = useDashboardStats();
+  const { setParams: setDashboardStore, filter } = useDashboardStore();
 
   const user = useAuthStore((state) => state.user);
   const userName = useMemo(() => user?.name || "User", [user?.name]);
@@ -101,11 +49,33 @@ const EcommercePage = () => {
       ]
     : [];
 
+  const handleDatePickerChange = (value: string[]) => {
+    setDashboardStore({
+      filter: {
+        date: value,
+      },
+    });
+  };
+
+  console.log("dates filter. " + filter?.date);
+
   const t = useTranslations("EcommerceDashboard");
 
   return (
     <div className="space-y-5">
       {/* Start of counters*/}
+      <div className={cn("flex flex-wrap gap-4 items-center justify-end")}>
+        <button
+          onClick={() => {
+            handleDatePickerChange([]);
+          }}
+          className="text-sm px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition-colors duration-200"
+        >
+          Clear
+        </button>
+        <div className="text-2xl font-medium text-default-800 capitalize"></div>
+        <DashboardDateRangePicker onChange={handleDatePickerChange}/>
+      </div>
       <Card>
         <CardContent className=" p-6">
           <div className="grid xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5 place-content-center">
@@ -116,7 +86,6 @@ const EcommercePage = () => {
                   <AvatarFallback>SA</AvatarFallback>
                 </Avatar>
               </div>
-
 
               <div className="flex-1">
                 <h4 className="text-xl font-medium mb-2">
@@ -132,6 +101,7 @@ const EcommercePage = () => {
             <StatusBlock
               title="Candidates Required"
               total={counters?.candidates_required}
+              chartColor="#4669FA"
               chartType="bar"
               className="bg-default-50 shadow-none border-none"
               opacity={1}
@@ -148,7 +118,7 @@ const EcommercePage = () => {
             <StatusBlock
               title="Candidates Billed"
               total={counters?.candidates_billed}
-              chartColor="#ffbf99"
+              chartColor="#b019f1ff"
               className="bg-default-50 shadow-none border-none"
               chartType="bar"
               series={[40, 70, 45, 100, 75, 40, 80, 90]}
@@ -169,17 +139,17 @@ const EcommercePage = () => {
                   chartType="bar"
                   height={400}
                   series={series}
-                  chartColors={["#4669FA", "#0CE7FA", "#FA916B"]}
+                  chartColors={["#4669FA", "#80fac1", "#b019f1ff"]}
                 />
-              ) : (
+              ) : loadingCandidates ? (
                 <p>Loading chart...</p>
-              )}
+              ) : <p>No data available...</p>}
             </CardContent>
           </Card>
         </div>
-      {/* End Candidates per mounth*/}
+        {/* End Candidates per mounth*/}
 
-      {/* Start of statistics*/}
+        {/* Start of statistics*/}
         <div className="col-span-12 lg:col-span-4">
           <Card>
             <CardHeader className="flex flex-row items-center gap-1">
@@ -190,29 +160,42 @@ const EcommercePage = () => {
               <div className="grid grid-cols-2  gap-5">
                 <div className="col-span-2 md:col-span-1">
                   <OrdersBlock
-                    title={t("orders")}
-                    total="123k"
+                    title={t("dashboard_stats_requisitions")}
+                    total={stats?.total_requisitions?.count || 0}
                     chartColor="#f1595c"
+                    percentageContent={
+                      <span className="text-primary">
+                        {stats?.total_requisitions?.percentage_last_period || 0}
+                      </span>
+                    }
                     className="border-none shadow-none bg-default-50 "
                   />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <OrdersBlock
-                    title={t("profit")}
-                    total="123k"
+                    title={t("dashboard_stats_candidates")}
+                    total={stats?.total_candidates?.count || 0}
                     chartColor="#4669fa"
                     chartType="line"
                     percentageContent={
-                      <span className="text-primary">+2.5%</span>
+                      <span className="text-primary">
+                        {stats?.total_candidates?.percentage_last_period || 0}
+                      </span>
                     }
                     className="border-none shadow-none bg-default-50 col-span-2 md:col-span-1"
                   />
                 </div>
                 <div className="col-span-2">
                   <EarningBlock
-                    title={t("earnings")}
-                    total="$12,335.00"
-                    percentage="+08%"
+                    title={t("dashboard_stats_billed_candidates")}
+                    total={new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(stats?.budget_billed_candidates?.amount ?? 0)}
+                    percentage={
+                      stats?.budget_billed_candidates?.percentage_last_period ||
+                      0
+                    }
                     className="col-span-2 border-none shadow-none bg-default-50"
                   />
                 </div>
@@ -220,25 +203,27 @@ const EcommercePage = () => {
             </CardContent>
           </Card>
         </div>
-      {/* End of statistics*/}
+        {/* End of statistics*/}
       </div>
 
       <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-
-      {/* Start of Top Customers*/}
+        {/* Start of Top Customers*/}
         <Card>
           <CardHeader className="flex flex-row items-center gap-1">
             <CardTitle className="flex-1">{t("customer")}</CardTitle>
             <DashboardDropdown />
           </CardHeader>
           <CardContent>
-            {customers?.length ? (<Customer data={customers}/>) : (<p>Loading chart...</p>)}
-            
+            {customers?.length ? (
+              <Customer data={customers} />
+            ) : loadingCustomers ? (
+              <p>Loading chart...</p>
+            ) : <p>No data available...</p>}
           </CardContent>
         </Card>
-      {/* End of Top Customers*/}
+        {/* End of Top Customers*/}
 
-      {/* Start of Recent Reqs*/}
+        {/* Start of Recent Reqs*/}
         <Card>
           <CardHeader className="flex flex-row items-center gap-1">
             <CardTitle className="flex-1">
@@ -250,9 +235,9 @@ const EcommercePage = () => {
             <RecentOrderTable />
           </CardContent>
         </Card>
-              {/* Start of Recent Reqs*/}
+        {/* Start of Recent Reqs*/}
       </div>
-{/* 
+      {/* 
 
       <div className="grid grid-cols-12  gap-5">
         <div className="lg:col-span-8 col-span-12">
@@ -302,4 +287,4 @@ const EcommercePage = () => {
   );
 };
 
-export default EcommercePage;
+export default DashboardPage;

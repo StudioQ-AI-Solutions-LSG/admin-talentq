@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDashboardStore } from "@/store/dashboard.store";
 import dashboardService from "../services/dashboard-service";
 
-export const useDashboardCounters = () => {
+export const useDashboardStats = () => {
     const {
         selected_division,
         selected_customer,
@@ -16,14 +16,14 @@ export const useDashboardCounters = () => {
     };
 
     const {
-        data: counters,
+        data: stats,
         isLoading: isFetching,
         error: queryError,
         refetch
     } = useQuery({
-        queryKey: ["counters", queryParams],
+        queryKey: ["stats", queryParams],
         queryFn: async () => {
-            return dashboardService.getCounters(queryParams)
+            return dashboardService.getStats(queryParams)
         },
         staleTime: 1000 * 60 * 5
     })
@@ -36,7 +36,7 @@ export const useDashboardCounters = () => {
     };
 
     return {
-        counters: counters ?? {},
+        stats: stats ?? {},
         isLoading: isFetching,
         error: queryError ? getErrorMessage(queryError) : null,
         refetch

@@ -37,6 +37,7 @@ export const useDashboardStore = create<DashboardStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         selected_customer: state.selected_customer, // only persist this field
+        filter: state.filter
       }),
     }
   )

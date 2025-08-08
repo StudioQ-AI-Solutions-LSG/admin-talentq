@@ -31,3 +31,27 @@ export interface DashboardTopCustomers {
   candidates_accepted: number;
   completion_percentage: number;
 }
+
+export interface DashboardStats {
+  total_requisitions: RequisitionStat;
+  total_candidates: CandidateStat;
+  budget_billed_candidates: BudgetStat;
+}
+
+interface RequisitionStat {
+  count: number;
+  countLastPeriod: number;
+  percentage_last_period: number;
+}
+
+interface CandidateStat {
+  count: number;
+  countLastPeriod: number;
+  percentage_last_period: number;
+}
+
+interface BudgetStat {
+  amount: number;
+  amountLastPeriod: number;
+  percentage_last_period: number;
+}
