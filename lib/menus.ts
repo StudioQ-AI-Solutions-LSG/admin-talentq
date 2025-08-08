@@ -36,7 +36,7 @@ export function getMenuList(pathname: string, t: any): Group[] {
   return [
     {
       groupLabel: t(""),
-      id: "candidates",
+      id: "dashboard",
       menus: [
         {
           id: "dashboard",
@@ -71,7 +71,7 @@ export function getHorizontalMenuList(pathname: string, t: any): Group[] {
   return [
     {
       groupLabel: t("Menu"),
-      id: "candidates",
+      id: "dashboard",
       menus: [
         {
           id: "dashboard",

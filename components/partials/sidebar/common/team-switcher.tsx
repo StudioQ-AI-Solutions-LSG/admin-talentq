@@ -46,6 +46,7 @@ import { useMenuHoverConfig } from "@/hooks/use-menu-hover";
 import { useAccounts } from "@/hooks/use-accounts";
 import { useCandidatesStore } from "@/store/candidate.store";
 import { useRequisitionsStore } from "@/store/requisition.store";
+import { useDashboardStore } from "@/store/dashboard.store";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -58,11 +59,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [hoverConfig] = useMenuHoverConfig();
   const { hovered } = hoverConfig;
   const user = useAuthStore((state) => state.user);
-  console.log(user)
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
+  const [isChangingAccount, setIsChangingAccount] = React.useState(false);
 
-    // Usar el store global para la cuenta seleccionada
+  // Usar el store global para la cuenta seleccionada
   const selectedAccount = useAuthStore((state) => state.selectedAccount);
   const setSelectedAccount = useAuthStore((state) => state.setSelectedAccount);
 
@@ -70,9 +71,82 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     selected_division: "4f02cd07-316a-42c7-a3f8-38223d32dcba",
   });
 
-  const { setParams: setCandidatesStore, selected_customer_name } =
-    useCandidatesStore();
+  const { setParams: setCandidatesStore, selected_customer_name } = useCandidatesStore();
   const { setParams: setRequisitionsStore } = useRequisitionsStore();
+  const { setParams: setDashboardStore } = useDashboardStore();
+
+  // Debounced account change to prevent rapid successive changes
+  const debouncedAccountChange = React.useCallback(
+    React.useMemo(() => {
+      let timeoutId: NodeJS.Timeout;
+      return (accountId: string, accountName: string) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (isChangingAccount) return;
+          
+          setIsChangingAccount(true);
+          setOpen(false);
+          
+          try {
+            // Batch all store updates together
+            setCandidatesStore({
+              selected_customer: accountId,
+              selected_customer_name: accountName,
+            });
+            setRequisitionsStore({
+              selected_customer: accountId,
+            });
+            setDashboardStore({
+              selected_customer: accountId,
+            });
+          } catch (error) {
+            console.error("Error changing account:", error);
+          } finally {
+            setTimeout(() => {
+              setIsChangingAccount(false);
+            }, 500); // Add a small delay to prevent rapid changes
+          }
+        }, 100); // 100ms debounce
+      };
+    }, [setCandidatesStore, setRequisitionsStore, setDashboardStore, isChangingAccount]),
+    [setCandidatesStore, setRequisitionsStore, setDashboardStore, isChangingAccount]
+  );
+
+  // Handle "All Accounts" selection with debouncing
+  const debouncedAllAccountsChange = React.useCallback(
+    React.useMemo(() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (isChangingAccount) return;
+          
+          setIsChangingAccount(true);
+          setOpen(false);
+          
+          try {
+            setCandidatesStore({
+              selected_customer: "",
+              selected_customer_name: "All Accounts",
+            });
+            setRequisitionsStore({
+              selected_customer: "",
+            });
+            setDashboardStore({
+              selected_customer: "",
+            });
+          } catch (error) {
+            console.error("Error selecting all accounts:", error);
+          } finally {
+            setTimeout(() => {
+              setIsChangingAccount(false);
+            }, 500);
+          }
+        }, 100);
+      };
+    }, [setCandidatesStore, setRequisitionsStore, setDashboardStore, isChangingAccount]),
+    [setCandidatesStore, setRequisitionsStore, setDashboardStore, isChangingAccount]
+  );
 
   if (config.showSwitcher === false || config.sidebar === "compact") {
     return null;
@@ -100,6 +174,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   "  h-14 w-14 mx-auto  p-0 md:p-0  dark:border-secondary ring-offset-sidebar",
                   className
                 )}
+                disabled={isChangingAccount}
               >
                 <Avatar className="">
                   <AvatarImage
@@ -127,6 +202,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   "  h-auto py-3 md:px-3 px-3 justify-start dark:border-secondary ring-offset-sidebar",
                   className
                 )}
+                disabled={isChangingAccount}
               >
                 <div className=" flex  gap-2 flex-1 items-center">
                   <Avatar className=" flex-none h-[38px] w-[38px]">
@@ -188,23 +264,15 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                 <CommandGroup heading="Customer Accounts">
                   <CommandItem
                     key="all-accounts"
-                    onSelect={() => {
-                      setOpen(false);
-                      setCandidatesStore({
-                        selected_customer: "",
-                        selected_customer_name: "All Accounts",
-                      });
-                      setRequisitionsStore({
-                        selected_customer: "",
-                      });
-                    }}
+                    onSelect={debouncedAllAccountsChange}
                     className="text-sm font-normal"
+                    disabled={isChangingAccount}
                   >
                     All Accounts
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        selected_customer_name === null
+                        selected_customer_name === "All Accounts"
                           ? "opacity-100"
                           : "opacity-0"
                       )}
@@ -213,17 +281,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                   {accounts.map((account) => (
                     <CommandItem
                       key={account.id}
-                      onSelect={() => {
-                        setOpen(false);
-                        setCandidatesStore({
-                          selected_customer: account.id,
-                          selected_customer_name: account.name,
-                        });
-                        setRequisitionsStore({
-                          selected_customer: account.id,
-                        });
-                      }}
+                      onSelect={() => debouncedAccountChange(account.id, account.name)}
                       className="text-sm font-normal"
+                      disabled={isChangingAccount}
                     >
                       {account.name}
                       <Check
