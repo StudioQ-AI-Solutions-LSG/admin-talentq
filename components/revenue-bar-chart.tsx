@@ -1,5 +1,6 @@
 "use client";
 
+import { DashboardCandidatesPerMounth } from "@/app/[locale]/(protected)/dashboard/types/dashboard.types";
 import { useConfig } from "@/hooks/use-config";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -11,6 +12,7 @@ interface RevenueBarChartProps {
   chartType?: "bar" | "area";
   series?: any[];
   chartColors?: string[];
+  data: DashboardCandidatesPerMounth;
 }
 
 const defaultSeries = [
@@ -69,28 +71,12 @@ const data = {
   ],
 };
 
-const categories = data.items.map((item) => item.month);
-
-const series = [
-  {
-    name: "Candidates Required",
-    data: data.items.map((item) => item.candidates_required),
-  },
-  {
-    name: "Candidates Accepted",
-    data: data.items.map((item) => item.candidates_accepted),
-  },
-  {
-    name: "Candidates Billed",
-    data: data.items.map((item) => item.candidates_billed),
-  },
-];
-
 const RevenueBarChart = ({
   height = 400,
   chartType = "bar",
   series = defaultSeries,
   chartColors = ["#4669FA", "#0CE7FA", "#FA916B"],
+  data
 }: RevenueBarChartProps) => {
   const [config] = useConfig();
   const { isRtl } = config;

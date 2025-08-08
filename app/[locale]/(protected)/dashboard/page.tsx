@@ -140,6 +140,7 @@ const DashboardPage = () => {
                   height={400}
                   series={series}
                   chartColors={["#4669FA", "#80fac1", "#b019f1ff"]}
+                  data={candidates}
                 />
               ) : loadingCandidates ? (
                 <p>Loading chart...</p>

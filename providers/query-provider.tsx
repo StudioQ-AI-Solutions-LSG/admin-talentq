@@ -17,6 +17,15 @@ export default function QueryProvider({
             refetchOnWindowFocus: false,
             retry: 1, // Only retry failed requests once
             refetchOnMount: true,
+            // Add these optimizations to prevent cascade refetches
+            refetchOnReconnect: false,
+            gcTime: 1000 * 60 * 10, // 10 minutes garbage collection
+            // Prevent too many simultaneous requests
+            networkMode: 'online',
+          },
+          mutations: {
+            retry: 1,
+            networkMode: 'online',
           },
         },
       })
