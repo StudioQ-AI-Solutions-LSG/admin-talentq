@@ -6,11 +6,13 @@ export const useDashboardCandidatesPerMounth = () => {
     const {
         selected_division,
         selected_customer,
+        filter
     } = useDashboardStore();
 
     const queryParams = {
         selected_division,
-        selected_customer
+        selected_customer,
+        filter
     };
 
     const {

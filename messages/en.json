@@ -117,9 +117,9 @@
     "progress": "Progress",
     "most_sales_map_title": "Most Sales",
     "total_earning_map_button_1": "Global",
-    "orders": "Requisitions",
-    "profit": "Profit",
-    "earnings": "Earnings",
+    "dashboard_stats_requisitions": "Requisitions",
+    "dashboard_stats_candidates": "Candidates",
+    "dashboard_stats_billed_candidates": "Billed Amount",
     "statistics": "Statistics",
     "statistics_graph_desc": "From Last weeks"
   },

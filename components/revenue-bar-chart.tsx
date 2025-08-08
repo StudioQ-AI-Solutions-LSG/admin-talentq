@@ -138,9 +138,12 @@ const RevenueBarChart = ({
       offsetX: isRtl ? "0%" : 0,
       floating: false,
       style: {
-        fontSize: "20px",
-        fontWeight: "500",
-        fontFamily: "Inter",
+        fontSize: "1.2 rem", // text-2xl
+        fontWeight: 600, // font-semibold
+        lineHeight: "1", // leading-none
+        letterSpacing: "-0.01562em", // tracking-tight
+        fontFamily:
+          "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
         color: mode === "dark" ? "#fff" : "#0f172a",
       },
     },
